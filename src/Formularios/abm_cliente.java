@@ -5,21 +5,54 @@
  */
 package Formularios;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author alumno
  */
 public class abm_cliente extends javax.swing.JFrame {
 
+    Connection con = Conexion.Conexion.conexion();
     /**
      * Creates new form abm_cliente
      */
     public abm_cliente() {
         initComponents();
+        componentdesactivado();
         buttonGroup1.add(jRadioButton1);
         buttonGroup1.add(jRadioButton2);
     }
 
+    void componentdesactivado(){
+        nombre.setText("");
+        apellido.setText("");
+        telefono.setText("");
+        direccion.setText("");
+        buttonGroup1.clearSelection();
+        nombre.setEnabled(false);
+        apellido.setEnabled(false);
+        telefono.setEnabled(false);
+        direccion.setEnabled(false);
+        jRadioButton1.setEnabled(false);
+        jRadioButton2.setEnabled(false);
+        agregar.setEnabled(false);
+        modificar.setEnabled(false);
+        guardar.setEnabled(false);
+        cancelar.setEnabled(false);
+    }
+    
+    void componentactivo(){
+        nombre.setEnabled(true);
+        apellido.setEnabled(true);
+        telefono.setEnabled(true);
+        direccion.setEnabled(true);
+        jRadioButton1.setEnabled(true);
+        jRadioButton2.setEnabled(true);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -92,21 +125,46 @@ public class abm_cliente extends javax.swing.JFrame {
                 "Nombre", "Apellido", "Telefono", "Direccion", "Estado"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         guardar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         guardar.setText("Guardar");
+        guardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarActionPerformed(evt);
+            }
+        });
 
         modificar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         modificar.setText("Modificar");
+        modificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modificarActionPerformed(evt);
+            }
+        });
 
         cancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         cancelar.setText("Cancelar");
+        cancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarActionPerformed(evt);
+            }
+        });
 
         nom_buscar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         buscar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         buscar.setText("Buscar");
+        buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel5.setText("Nombre");
@@ -122,6 +180,11 @@ public class abm_cliente extends javax.swing.JFrame {
 
         agregar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         agregar.setText("Agregar");
+        agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregarActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -236,6 +299,91 @@ public class abm_cliente extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
+        // TODO add your handling code here:
+        Connection con = Conexion.Conexion.conexion();
+        String nom = nom_buscar.getText();
+        try{
+            ResultSet rs = Clases.Cliente.Buscar(con, nom);
+            DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+            modelo.setRowCount(0);
+            boolean encontrado = false;
+            while (rs.next()){
+                Object[] fila = {
+                    rs.getString("nombre_cliente"),
+                    rs.getString("apellido_cliente"),
+                    rs.getString("telefono_cliente"),
+                    rs.getString("direccion_cliente"),
+                    rs.getString("estado")
+                };
+                modelo.addRow(fila);
+                encontrado = true;
+            }
+            if(!encontrado){
+                JOptionPane.showMessageDialog(null, "No se encontro el cliente puede cargarlo");
+                componentactivo();
+                agregar.setEnabled(true);
+                cancelar.setEnabled(true);
+            }
+            rs.close();
+            con.close();
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(this, "Error al buscar el cliente "+ex.getMessage());
+        }
+    }//GEN-LAST:event_buscarActionPerformed
+
+    private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
+        // TODO add your handling code here:
+        componentdesactivado();
+        guardar.setEnabled(false);
+        modificar.setEnabled(false);
+        cancelar.setEnabled(false);
+    }//GEN-LAST:event_cancelarActionPerformed
+
+    private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
+        // TODO add your handling code here:
+        int estado = jRadioButton1.isSelected() ? 1 : 0;
+        try{
+            Clases.Cliente.Insertar(con, nombre.getText(), apellido.getText(), telefono.getText(), direccion.getText(), estado);
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(this, "Error no pudo cargar el cliente "+ex.getMessage());
+        }
+    }//GEN-LAST:event_agregarActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        int filaSeleccionada = jTable1.getSelectedRow();
+        if (filaSeleccionada >= 0){
+            nombre.setText(jTable1.getValueAt(filaSeleccionada, 0).toString());
+            apellido.setText(jTable1.getValueAt(filaSeleccionada, 1).toString());
+            telefono.setText(jTable1.getValueAt(filaSeleccionada, 2).toString());
+            direccion.setText(jTable1.getValueAt(filaSeleccionada, 3).toString());
+            buttonGroup1.setSelected(
+                "Activo".equals(jTable1.getValueAt(filaSeleccionada, 4).toString()) ? jRadioButton1.getModel() : 
+                "Inactivo".equals(jTable1.getValueAt(filaSeleccionada, 4).toString()) ? jRadioButton2.getModel() : null,
+                true
+            );
+            modificar.setEnabled(true);
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarActionPerformed
+        // TODO add your handling code here:
+        componentactivo();
+        guardar.setEnabled(true);
+        cancelar.setEnabled(true);
+    }//GEN-LAST:event_modificarActionPerformed
+
+    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
+        // TODO add your handling code here:
+        int estado = jRadioButton1.isSelected() ? 1 : 0;
+        try{
+            Clases.Cliente.Modificar(con, nombre.getText(), apellido.getText(), telefono.getText(), direccion.getText(), estado);
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(this, "Error no se puede modificar" +ex.getMessage());
+        }
+    }//GEN-LAST:event_guardarActionPerformed
 
     /**
      * @param args the command line arguments

@@ -22,7 +22,7 @@ public class Producto {
         rs = stm.executeQuery();
         return rs;
     }
-    public static void insertar(Connection con, String descripcion, int id_marca,int estado_producto) throws Exception{
+    public static void Insertar(Connection con, String descripcion, int id_marca,int estado_producto) throws Exception{
         PreparedStatement stm = con.prepareStatement("insert into producto(descripcion_producto, id_marca, estado_producto) values (?, ?, ?)");
         stm.setString(1, descripcion);
         stm.setInt(2, id_marca);
@@ -35,7 +35,7 @@ public class Producto {
         }
     }
     
-    public static void modificar(Connection con, String descripcion, int marca, int estado, int codig)throws Exception{
+    public static void Modificar(Connection con, String descripcion, int marca, int estado, int codig)throws Exception{
         PreparedStatement stm = con.prepareStatement("update producto set descripcion_producto = ?, id_marca = ?, estado_producto = ? where id_producto = ?");
         stm.setString(1, descripcion);
         stm.setInt(2, marca);

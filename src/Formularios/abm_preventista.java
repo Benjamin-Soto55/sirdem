@@ -5,21 +5,54 @@
  */
 package Formularios;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author alumno
  */
 public class abm_preventista extends javax.swing.JFrame {
 
+    Connection con = Conexion.Conexion.conexion();
     /**
      * Creates new form abm_preventista
      */
     public abm_preventista() {
         initComponents();
+        componentdesactivado();
         buttonGroup1.add(jRadioButton1);
         buttonGroup1.add(jRadioButton2);
     }
 
+    void componentdesactivado(){
+        nombre.setText("");
+        apellido.setText("");
+        dni.setText("");
+        telefono.setText("");
+        buttonGroup1.clearSelection();
+        nombre.setEnabled(false);
+        apellido.setEnabled(false);
+        dni.setEnabled(false);
+        telefono.setEnabled(false);
+        jRadioButton1.setEnabled(false);
+        jRadioButton2.setEnabled(false);
+        agregar.setEnabled(false);
+        modificar.setEnabled(false);
+        guardar.setEnabled(false);
+        cancelar.setEnabled(false);
+    }
+    
+    void componentactivo(){
+        nombre.setEnabled(true);
+        apellido.setEnabled(true);
+        dni.setEnabled(true);
+        telefono.setEnabled(true);
+        jRadioButton1.setEnabled(true);
+        jRadioButton2.setEnabled(true);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,7 +68,6 @@ public class abm_preventista extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         nombre = new javax.swing.JTextField();
         apellido = new javax.swing.JTextField();
         dni = new javax.swing.JTextField();
@@ -45,13 +77,12 @@ public class abm_preventista extends javax.swing.JFrame {
         guardar = new javax.swing.JButton();
         modificar = new javax.swing.JButton();
         cancelar = new javax.swing.JButton();
-        nom_buscar = new javax.swing.JTextField();
+        dni_buscar = new javax.swing.JTextField();
         buscar = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
         agregar = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -74,9 +105,6 @@ public class abm_preventista extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel5.setText("Telefono");
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel6.setText("Año Ingreso");
-
         nombre.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         apellido.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -97,21 +125,46 @@ public class abm_preventista extends javax.swing.JFrame {
                 "Nombre", "Apellido", "D.N.I.", "Telefono", "Año ngreso", "Estado"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         guardar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         guardar.setText("Guardar");
+        guardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarActionPerformed(evt);
+            }
+        });
 
         modificar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         modificar.setText("Modificar");
+        modificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modificarActionPerformed(evt);
+            }
+        });
 
         cancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         cancelar.setText("Cancelar");
+        cancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarActionPerformed(evt);
+            }
+        });
 
-        nom_buscar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        dni_buscar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         buscar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         buscar.setText("Buscar");
+        buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarActionPerformed(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel7.setText("D.N.I.");
@@ -127,6 +180,11 @@ public class abm_preventista extends javax.swing.JFrame {
 
         agregar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         agregar.setText("Agregar");
+        agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregarActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -149,11 +207,11 @@ public class abm_preventista extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addGap(65, 65, 65)
                         .addComponent(apellido))
-                    .addComponent(guardar)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(129, 129, 129)
                         .addComponent(modificar)
-                        .addGap(38, 38, 38)
+                        .addGap(37, 37, 37)
+                        .addComponent(guardar)
+                        .addGap(35, 35, 35)
                         .addComponent(cancelar))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -166,18 +224,14 @@ public class abm_preventista extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel6))
-                        .addGap(30, 30, 30)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel8))
+                        .addGap(65, 65, 65)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jRadioButton1)
                                 .addGap(31, 31, 31)
                                 .addComponent(jRadioButton2))
-                            .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(136, 136, 136)))))
+                            .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(72, 72, 72))
             .addGroup(layout.createSequentialGroup()
                 .addGap(373, 373, 373)
@@ -187,7 +241,7 @@ public class abm_preventista extends javax.swing.JFrame {
                 .addGap(113, 113, 113)
                 .addComponent(jLabel7)
                 .addGap(28, 28, 28)
-                .addComponent(nom_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(dni_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
                 .addComponent(buscar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -203,7 +257,7 @@ public class abm_preventista extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(nom_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dni_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(buscar)
                             .addComponent(jLabel7))
                         .addGap(18, 18, 18)
@@ -224,20 +278,16 @@ public class abm_preventista extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(telefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel5))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jDateChooser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(26, 26, 26)
+                                .addGap(29, 29, 29)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jRadioButton1)
                                     .addComponent(jRadioButton2)
                                     .addComponent(jLabel8))
-                                .addGap(28, 28, 28)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(guardar)
                                     .addComponent(modificar)
-                                    .addComponent(cancelar)))
+                                    .addComponent(cancelar)
+                                    .addComponent(guardar)))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
@@ -248,6 +298,92 @@ public class abm_preventista extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
+        // TODO add your handling code here:
+        Connection con = Conexion.Conexion.conexion();
+        String dni = dni_buscar.getText();
+        try{
+            ResultSet rs = Clases.Preventista.Buscar(con, dni);
+            DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+            modelo.setRowCount(0);
+            boolean encontrado = false;
+            while(rs.next()){
+                Object[] fila = {
+                    rs.getString("nombre_preventista"),
+                    rs.getString("apellido_preventista"),
+                    rs.getString("dni_preventista"),
+                    rs.getString("telefono_preventista"),
+                    rs.getDate("ingreso_preventista"),
+                    rs.getString("estado")
+                };
+                modelo.addRow(fila);
+                encontrado = true;
+            }
+            if (!encontrado){
+                JOptionPane.showMessageDialog(null, "No se encontro el preventista. Puede cargar sus datos");
+                componentactivo();
+                agregar.setEnabled(true);
+                cancelar.setEnabled(true);
+            }
+            rs.close();
+            con.close();
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(this,"Error al buscar el cliente " +ex.getMessage());
+        }
+    }//GEN-LAST:event_buscarActionPerformed
+
+    private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
+        // TODO add your handling code here:
+        int estado = jRadioButton1.isSelected() ? 1 : 0;
+        try{
+            Clases.Preventista.Insertar(con, nombre.getText(), apellido.getText(), dni.getText(), telefono.getText(), estado);
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(this, "Error no pudo cargar al preventista"+ex.getMessage());
+        }
+    }//GEN-LAST:event_agregarActionPerformed
+
+    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
+        // TODO add your handling code here:
+        int estado = jRadioButton1.isSelected() ? 1 : 0;
+        try{
+            Clases.Preventista.Modificar(con, nombre.getText(), apellido.getText(), dni.getText(), telefono.getText(), estado);
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(this, "Eror no se puede modificar "+ex.getMessage());
+        }
+    }//GEN-LAST:event_guardarActionPerformed
+
+    private void modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarActionPerformed
+        // TODO add your handling code here:
+        componentactivo();
+        guardar.setEnabled(true);
+        cancelar.setEnabled(true);
+    }//GEN-LAST:event_modificarActionPerformed
+
+    private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
+        // TODO add your handling code here:
+        componentdesactivado();
+        guardar.setEnabled(false);
+        modificar.setEnabled(false);
+        cancelar.setEnabled(false);
+    }//GEN-LAST:event_cancelarActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        int filaSeleccionada = jTable1.getSelectedRow();
+        if(filaSeleccionada >= 0){
+            nombre.setText(jTable1.getValueAt(filaSeleccionada, 0).toString());
+            apellido.setText(jTable1.getValueAt(filaSeleccionada, 1).toString());
+            dni.setText(jTable1.getValueAt(filaSeleccionada, 2).toString());
+            telefono.setText(jTable1.getValueAt(filaSeleccionada, 3).toString());
+            buttonGroup1.setSelected(
+                "Activo".equals(jTable1.getValueAt(filaSeleccionada, 5).toString()) ? jRadioButton1.getModel() : 
+                "Inactivo".equals(jTable1.getValueAt(filaSeleccionada, 5).toString()) ? jRadioButton2.getModel() : null,
+                true
+            );
+            modificar.setEnabled(true);
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -291,14 +427,13 @@ public class abm_preventista extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelar;
     private javax.swing.JTextField dni;
+    private javax.swing.JTextField dni_buscar;
     private javax.swing.JButton guardar;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu1;
@@ -309,7 +444,6 @@ public class abm_preventista extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JButton modificar;
-    private javax.swing.JTextField nom_buscar;
     private javax.swing.JTextField nombre;
     private javax.swing.JTextField telefono;
     // End of variables declaration//GEN-END:variables

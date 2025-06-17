@@ -41,6 +41,9 @@ public class abm_producto extends javax.swing.JFrame {
     }
     
     void componentdesactivado(){
+        descripcion.setText("");
+        jComboBox2.setSelectedIndex(0);
+        buttonGroup1.clearSelection();
         descripcion.setEnabled(false);
         jComboBox2.setEnabled(false);
         jRadioButton1.setEnabled(false);
@@ -307,7 +310,7 @@ public class abm_producto extends javax.swing.JFrame {
                 encontrado = true;
             }
             if (!encontrado){
-                JOptionPane.showMessageDialog(null, "no se encontro el producto puede cargarlo...");
+                JOptionPane.showMessageDialog(null, "No se encontro el producto puede cargarlo...");
                 componentactivo();
                 agregar.setEnabled(true);
                 cancelar.setEnabled(true);
@@ -325,16 +328,10 @@ public class abm_producto extends javax.swing.JFrame {
         int estado = jRadioButton1.isSelected() ? 1 : 0;
         int codig = Integer.parseInt(codigo.getText());
         try{
-            Clases.Producto.modificar(con, descripcion.getText(), marc, estado, codig);
+            Clases.Producto.Modificar(con, descripcion.getText(), marc, estado, codig);
         }catch(Exception ex){
             JOptionPane.showInternalMessageDialog(this,"Error no se pudo cargar el libro"+ ex.getMessage());
         }
-        /*Connection con = Conexion.Conexion.conexion();
-        int marc = marcamap.get(jComboBox2.getSelectedItem().toString());
-        try {
-            Clases.Producto.insertar(con, descripcion.getText(), marc, ABORT);
-        }catch(Exception ex){
-        }*/
     }//GEN-LAST:event_guardarActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -361,6 +358,7 @@ public class abm_producto extends javax.swing.JFrame {
         // TODO add your handling code here:
         componentactivo();
         guardar.setEnabled(true);
+        cancelar.setEnabled(true);
     }//GEN-LAST:event_modificarActionPerformed
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
@@ -368,7 +366,7 @@ public class abm_producto extends javax.swing.JFrame {
         int marc = marcamap.get(jComboBox2.getSelectedItem().toString());
         int estado = jRadioButton1.isSelected() ? 1 : 0;
         try{
-            Clases.Producto.insertar(con, descripcion.getText(), marc, estado);
+            Clases.Producto.Insertar(con, descripcion.getText(), marc, estado);
         }catch(Exception ex){
             JOptionPane.showInternalMessageDialog(this,"Error no se pudo cargar el libro"+ ex.getMessage());
         }
