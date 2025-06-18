@@ -8,6 +8,8 @@ package Formularios;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -17,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 public class abm_zona extends javax.swing.JFrame {
 
     Connection con = Conexion.Conexion.conexion();
+    private boolean modific = false;
     /**
      * Creates new form abm_zona
      */
@@ -25,15 +28,16 @@ public class abm_zona extends javax.swing.JFrame {
         componentdesactivado();
         buttonGroup1.add(jRadioButton1);
         buttonGroup1.add(jRadioButton2);
+        carga();
     }
 
     void componentdesactivado(){
+        id_zona.setText("");
         nombre.setText("");
         buttonGroup1.clearSelection();
         nombre.setEnabled(false);
         jRadioButton1.setEnabled(false);
         jRadioButton2.setEnabled(false);
-        agregar.setEnabled(false);
         modificar.setEnabled(false);
         guardar.setEnabled(false);
         cancelar.setEnabled(false);
@@ -43,6 +47,23 @@ public class abm_zona extends javax.swing.JFrame {
         nombre.setEnabled(true);
         jRadioButton1.setEnabled(true);
         jRadioButton2.setEnabled(true);
+    }
+    
+    void carga(){
+        nom_buscar.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                buscar();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                buscar();
+                componentdesactivado();
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                buscar();
+            }
+        });
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -58,7 +79,6 @@ public class abm_zona extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        buscar = new javax.swing.JButton();
         modificar = new javax.swing.JButton();
         cancelar = new javax.swing.JButton();
         nombre = new javax.swing.JTextField();
@@ -68,7 +88,7 @@ public class abm_zona extends javax.swing.JFrame {
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jLabel4 = new javax.swing.JLabel();
-        agregar = new javax.swing.JButton();
+        id_zona = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -83,13 +103,13 @@ public class abm_zona extends javax.swing.JFrame {
         jTable1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Nombre", "Estado"
+                "N°", "Nombre", "Estado"
             }
         ));
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -98,14 +118,6 @@ public class abm_zona extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jTable1);
-
-        buscar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        buscar.setText("Buscar");
-        buscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buscarActionPerformed(evt);
-            }
-        });
 
         modificar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         modificar.setText("Modificar");
@@ -146,15 +158,9 @@ public class abm_zona extends javax.swing.JFrame {
         jRadioButton2.setText("Inactivo");
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel4.setText("Nombre");
+        jLabel4.setText("Ingrese la zona a Buscar:");
 
-        agregar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        agregar.setText("Agregar");
-        agregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                agregarActionPerformed(evt);
-            }
-        });
+        id_zona.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -169,80 +175,80 @@ public class abm_zona extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(143, 143, 143))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addGap(36, 36, 36)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jRadioButton1)
-                        .addGap(27, 27, 27)
-                        .addComponent(jRadioButton2))
-                    .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(61, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(nom_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buscar))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(modificar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(303, 303, 303))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(guardar)
+                .addGap(35, 35, 35)
+                .addComponent(cancelar)
+                .addContainerGap(31, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addComponent(nom_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(56, 56, 56)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(agregar)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGap(36, 36, 36)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(guardar)
-                                .addGap(33, 33, 33)
-                                .addComponent(cancelar)))))
-                .addGap(30, 30, 30))
+                                .addComponent(jRadioButton1)
+                                .addGap(27, 27, 27)
+                                .addComponent(jRadioButton2))
+                            .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(181, 181, 181)
+                        .addComponent(id_zona, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(152, 152, 152)
+                        .addComponent(jLabel1)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(43, 43, 43)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nom_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buscar)
                     .addComponent(jLabel4))
+                .addGap(32, 32, 32)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(id_zona, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(26, 26, 26)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jRadioButton1)
                     .addComponent(jRadioButton2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(agregar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(modificar)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(cancelar)
-                        .addComponent(guardar)))
+                    .addComponent(guardar)
+                    .addComponent(cancelar))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
-        // TODO add your handling code here:
+    private void buscar(){
         Connection con = Conexion.Conexion.conexion();
         String nom = nom_buscar.getText();
         try{
@@ -252,6 +258,7 @@ public class abm_zona extends javax.swing.JFrame {
             boolean encontrado = false;
             while(rs.next()){
                 Object[] fila = {
+                  rs.getInt("id_zona"),
                   rs.getString("nombre_zona"),
                   rs.getString("estado")
                 };
@@ -259,36 +266,28 @@ public class abm_zona extends javax.swing.JFrame {
                 encontrado = true;
             }
             if(!encontrado){
-                JOptionPane.showMessageDialog(null,"No se encontro la zona puede cargarla.." );
+                //JOptionPane.showMessageDialog(null,"No se encontro la zona puede cargarla.." );
                 componentactivo();
-                agregar.setEnabled(true);
+                guardar.setEnabled(true);
                 cancelar.setEnabled(true);
+                jRadioButton1.setSelected(true);
+                modific = false;
             }
             rs.close();
             con.close();
         }catch(Exception ex){
             JOptionPane.showMessageDialog(this,"Error al buscar la zona " +ex.getMessage());
         }
-    }//GEN-LAST:event_buscarActionPerformed
-
-    private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
-        // TODO add your handling code here:
-        int estado = jRadioButton1.isSelected() ? 1 : 0;
-        try{
-            Clases.Zona.Insertar(con, nombre.getText(), estado);
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(this,"Error no se pudo cargar el libro" +ex.getMessage());
-        }
-    }//GEN-LAST:event_agregarActionPerformed
-
+    }
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
         int filaSeleccionada = jTable1.getSelectedRow();
         if (filaSeleccionada >= 0){
-            nombre.setText(jTable1.getValueAt(filaSeleccionada, 0).toString());
+            id_zona.setText(jTable1.getValueAt(filaSeleccionada, 0).toString());
+            nombre.setText(jTable1.getValueAt(filaSeleccionada, 1).toString());
             buttonGroup1.setSelected(
-                "Activo".equals(jTable1.getValueAt(filaSeleccionada, 1).toString()) ? jRadioButton1.getModel() : 
-                "Inactivo".equals(jTable1.getValueAt(filaSeleccionada, 1).toString()) ? jRadioButton2.getModel() : null,
+                "Activo".equals(jTable1.getValueAt(filaSeleccionada, 2).toString()) ? jRadioButton1.getModel() : 
+                "Inactivo".equals(jTable1.getValueAt(filaSeleccionada, 2).toString()) ? jRadioButton2.getModel() : null,
                 true
             );
             modificar.setEnabled(true);
@@ -298,11 +297,22 @@ public class abm_zona extends javax.swing.JFrame {
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         // TODO add your handling code here:
         int estado = jRadioButton1.isSelected() ? 1 : 0;
-        try{
-            Clases.Zona.Modificar(con, nombre.getText(), estado);
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(this,"Error no se puede modificar" +ex.getMessage());
+        if(modific){
+            int idd = Integer.parseInt(id_zona.getText());
+            try{
+                Clases.Zona.Modificar(con, nombre.getText(), estado, idd);
+            }catch(Exception ex){
+                JOptionPane.showMessageDialog(this,"Error no se puede modificar" +ex.getMessage());
+            }
+        }else{
+            try{
+                Clases.Zona.Insertar(con, nombre.getText(), estado);
+            }catch(Exception ex){
+                JOptionPane.showMessageDialog(this,"Error no se pudo cargar el libro" +ex.getMessage());
+            }
         }
+        componentdesactivado();
+        modific = false;
     }//GEN-LAST:event_guardarActionPerformed
 
     private void modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarActionPerformed
@@ -310,6 +320,7 @@ public class abm_zona extends javax.swing.JFrame {
         componentactivo();
         guardar.setEnabled(true);
         cancelar.setEnabled(true);
+        modific = true;
     }//GEN-LAST:event_modificarActionPerformed
 
     private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
@@ -356,11 +367,10 @@ public class abm_zona extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton agregar;
-    private javax.swing.JButton buscar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelar;
     private javax.swing.JButton guardar;
+    private javax.swing.JLabel id_zona;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

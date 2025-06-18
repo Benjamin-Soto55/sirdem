@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -17,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 public class abm_cliente extends javax.swing.JFrame {
 
     Connection con = Conexion.Conexion.conexion();
+    private boolean modific = false;
     /**
      * Creates new form abm_cliente
      */
@@ -25,9 +28,11 @@ public class abm_cliente extends javax.swing.JFrame {
         componentdesactivado();
         buttonGroup1.add(jRadioButton1);
         buttonGroup1.add(jRadioButton2);
+        carga();
     }
 
     void componentdesactivado(){
+        id_cliente.setText("");
         nombre.setText("");
         apellido.setText("");
         telefono.setText("");
@@ -39,7 +44,6 @@ public class abm_cliente extends javax.swing.JFrame {
         direccion.setEnabled(false);
         jRadioButton1.setEnabled(false);
         jRadioButton2.setEnabled(false);
-        agregar.setEnabled(false);
         modificar.setEnabled(false);
         guardar.setEnabled(false);
         cancelar.setEnabled(false);
@@ -52,6 +56,23 @@ public class abm_cliente extends javax.swing.JFrame {
         direccion.setEnabled(true);
         jRadioButton1.setEnabled(true);
         jRadioButton2.setEnabled(true);
+    }
+    
+    void carga(){
+        nom_buscar.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                buscar();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                buscar();
+                componentdesactivado();
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                buscar();
+            }
+        });
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -78,12 +99,11 @@ public class abm_cliente extends javax.swing.JFrame {
         modificar = new javax.swing.JButton();
         cancelar = new javax.swing.JButton();
         nom_buscar = new javax.swing.JTextField();
-        buscar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
-        agregar = new javax.swing.JButton();
+        id_cliente = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -116,13 +136,13 @@ public class abm_cliente extends javax.swing.JFrame {
         jTable1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Nombre", "Apellido", "Telefono", "Direccion", "Estado"
+                "N°", "Nombre", "Apellido", "Telefono", "Direccion", "Estado"
             }
         ));
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -158,16 +178,8 @@ public class abm_cliente extends javax.swing.JFrame {
 
         nom_buscar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
-        buscar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        buscar.setText("Buscar");
-        buscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buscarActionPerformed(evt);
-            }
-        });
-
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel5.setText("Nombre");
+        jLabel5.setText("Ingrese el cliente a Buscar: ");
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel6.setText("Estado");
@@ -178,13 +190,7 @@ public class abm_cliente extends javax.swing.JFrame {
         jRadioButton2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jRadioButton2.setText("Inactivo");
 
-        agregar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        agregar.setText("Agregar");
-        agregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                agregarActionPerformed(evt);
-            }
-        });
+        id_cliente.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -205,64 +211,67 @@ public class abm_cliente extends javax.swing.JFrame {
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(27, 27, 27)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(44, 44, 44)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(56, 56, 56)
-                                .addComponent(apellido))
-                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(44, 44, 44)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel1)
-                                            .addComponent(jLabel6))
+                                        .addComponent(jLabel2)
                                         .addGap(56, 56, 56)
+                                        .addComponent(apellido))
+                                    .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jRadioButton1)
-                                                .addGap(46, 46, 46)
-                                                .addComponent(jRadioButton2))
-                                            .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addGap(47, 47, 47)
-                                        .addComponent(direccion, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addGap(49, 49, 49)
-                                        .addComponent(telefono, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(118, 118, 118)
-                                        .addComponent(guardar)
-                                        .addGap(36, 36, 36)
-                                        .addComponent(cancelar))
-                                    .addComponent(modificar))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap(40, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(72, 72, 72)
-                .addComponent(jLabel5)
-                .addGap(18, 18, 18)
-                .addComponent(nom_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(buscar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(agregar)
-                .addGap(49, 49, 49))
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel1)
+                                                    .addComponent(jLabel6))
+                                                .addGap(56, 56, 56)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jRadioButton1)
+                                                        .addGap(46, 46, 46)
+                                                        .addComponent(jRadioButton2))
+                                                    .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel4)
+                                                .addGap(47, 47, 47)
+                                                .addComponent(direccion, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel3)
+                                                .addGap(49, 49, 49)
+                                                .addComponent(telefono, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(118, 118, 118)
+                                                .addComponent(guardar)
+                                                .addGap(36, 36, 36)
+                                                .addComponent(cancelar))
+                                            .addComponent(modificar))
+                                        .addGap(0, 2, Short.MAX_VALUE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(36, 36, 36)
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(nom_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(id_cliente, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(140, 140, 140)))))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nom_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buscar)
-                    .addComponent(jLabel5)
-                    .addComponent(agregar))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(nom_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(id_cliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
@@ -294,14 +303,13 @@ public class abm_cliente extends javax.swing.JFrame {
                             .addComponent(guardar)
                             .addComponent(modificar)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
-        // TODO add your handling code here:
+    private void buscar(){
         Connection con = Conexion.Conexion.conexion();
         String nom = nom_buscar.getText();
         try{
@@ -311,6 +319,7 @@ public class abm_cliente extends javax.swing.JFrame {
             boolean encontrado = false;
             while (rs.next()){
                 Object[] fila = {
+                    rs.getInt("id_clientes"),
                     rs.getString("nombre_cliente"),
                     rs.getString("apellido_cliente"),
                     rs.getString("telefono_cliente"),
@@ -321,18 +330,20 @@ public class abm_cliente extends javax.swing.JFrame {
                 encontrado = true;
             }
             if(!encontrado){
-                JOptionPane.showMessageDialog(null, "No se encontro el cliente puede cargarlo");
+                //JOptionPane.showMessageDialog(null, "No se encontro el cliente puede cargarlo");
                 componentactivo();
-                agregar.setEnabled(true);
+                guardar.setEnabled(true);
                 cancelar.setEnabled(true);
+                jRadioButton1.setSelected(true);
+                modific = false;
             }
             rs.close();
             con.close();
         }catch(Exception ex){
             JOptionPane.showMessageDialog(this, "Error al buscar el cliente "+ex.getMessage());
         }
-    }//GEN-LAST:event_buscarActionPerformed
-
+    }
+    
     private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
         // TODO add your handling code here:
         componentdesactivado();
@@ -341,27 +352,18 @@ public class abm_cliente extends javax.swing.JFrame {
         cancelar.setEnabled(false);
     }//GEN-LAST:event_cancelarActionPerformed
 
-    private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
-        // TODO add your handling code here:
-        int estado = jRadioButton1.isSelected() ? 1 : 0;
-        try{
-            Clases.Cliente.Insertar(con, nombre.getText(), apellido.getText(), telefono.getText(), direccion.getText(), estado);
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(this, "Error no pudo cargar el cliente "+ex.getMessage());
-        }
-    }//GEN-LAST:event_agregarActionPerformed
-
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
         int filaSeleccionada = jTable1.getSelectedRow();
         if (filaSeleccionada >= 0){
-            nombre.setText(jTable1.getValueAt(filaSeleccionada, 0).toString());
-            apellido.setText(jTable1.getValueAt(filaSeleccionada, 1).toString());
-            telefono.setText(jTable1.getValueAt(filaSeleccionada, 2).toString());
-            direccion.setText(jTable1.getValueAt(filaSeleccionada, 3).toString());
+            id_cliente.setText(jTable1.getValueAt(filaSeleccionada, 0).toString());
+            nombre.setText(jTable1.getValueAt(filaSeleccionada, 1).toString());
+            apellido.setText(jTable1.getValueAt(filaSeleccionada, 2).toString());
+            telefono.setText(jTable1.getValueAt(filaSeleccionada, 3).toString());
+            direccion.setText(jTable1.getValueAt(filaSeleccionada, 4).toString());
             buttonGroup1.setSelected(
-                "Activo".equals(jTable1.getValueAt(filaSeleccionada, 4).toString()) ? jRadioButton1.getModel() : 
-                "Inactivo".equals(jTable1.getValueAt(filaSeleccionada, 4).toString()) ? jRadioButton2.getModel() : null,
+                "Activo".equals(jTable1.getValueAt(filaSeleccionada, 5).toString()) ? jRadioButton1.getModel() : 
+                "Inactivo".equals(jTable1.getValueAt(filaSeleccionada, 5).toString()) ? jRadioButton2.getModel() : null,
                 true
             );
             modificar.setEnabled(true);
@@ -373,16 +375,28 @@ public class abm_cliente extends javax.swing.JFrame {
         componentactivo();
         guardar.setEnabled(true);
         cancelar.setEnabled(true);
+        modific = true;
     }//GEN-LAST:event_modificarActionPerformed
 
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         // TODO add your handling code here:
-        int estado = jRadioButton1.isSelected() ? 1 : 0;
-        try{
-            Clases.Cliente.Modificar(con, nombre.getText(), apellido.getText(), telefono.getText(), direccion.getText(), estado);
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(this, "Error no se puede modificar" +ex.getMessage());
-        }
+            int estado = jRadioButton1.isSelected() ? 1 : 0;
+            if (modific){
+                int idd = Integer.parseInt(id_cliente.getText());
+                try{
+                    Clases.Cliente.Modificar(con, nombre.getText(), apellido.getText(), telefono.getText(), direccion.getText(), estado, idd);
+                }catch(Exception ex){
+                    JOptionPane.showMessageDialog(this, "Error no se puede modificar" +ex.getMessage());
+                }
+            }else{
+                try{
+                    Clases.Cliente.Insertar(con, nombre.getText(), apellido.getText(), telefono.getText(), direccion.getText(), estado);
+                }catch(Exception ex){
+                    JOptionPane.showMessageDialog(this, "Error no pudo cargar el cliente "+ex.getMessage());
+                }
+            }
+                componentdesactivado();
+                modific = false;
     }//GEN-LAST:event_guardarActionPerformed
 
     /**
@@ -421,13 +435,12 @@ public class abm_cliente extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton agregar;
     private javax.swing.JTextField apellido;
-    private javax.swing.JButton buscar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelar;
     private javax.swing.JTextField direccion;
     private javax.swing.JButton guardar;
+    private javax.swing.JLabel id_cliente;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

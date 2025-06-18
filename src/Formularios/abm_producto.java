@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -22,15 +24,18 @@ public class abm_producto extends javax.swing.JFrame {
 
     Connection con = Conexion.Conexion.conexion();
     private Map<String, Integer> marcamap = new HashMap<>();
+    private boolean modific = false;
     /**
      * Creates new form abm_producto
      */
     public abm_producto() {
         initComponents();
+        carga();
         cargarMarca();
         componentdesactivado();
         buttonGroup1.add(jRadioButton1);
         buttonGroup1.add(jRadioButton2);
+        
     }
     
     void componentactivo(){
@@ -51,7 +56,6 @@ public class abm_producto extends javax.swing.JFrame {
         modificar.setEnabled(false);
         guardar.setEnabled(false);
         cancelar.setEnabled(false);
-        agregar.setEnabled(false);
     }
     
     void cargarMarca(){
@@ -75,6 +79,26 @@ public class abm_producto extends javax.swing.JFrame {
         }
     }
     
+    void carga(){
+        codigo.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                buscar();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                //buscar();
+                componentdesactivado();
+                DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+                modelo.setRowCount(0);
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                buscar();
+            }
+        });
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -96,12 +120,10 @@ public class abm_producto extends javax.swing.JFrame {
         modificar = new javax.swing.JButton();
         cancelar = new javax.swing.JButton();
         codigo = new javax.swing.JTextField();
-        buscar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jLabel5 = new javax.swing.JLabel();
-        agregar = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -167,14 +189,6 @@ public class abm_producto extends javax.swing.JFrame {
 
         codigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
-        buscar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        buscar.setText("Buscar");
-        buscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buscarActionPerformed(evt);
-            }
-        });
-
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setText("Estado");
 
@@ -185,15 +199,7 @@ public class abm_producto extends javax.swing.JFrame {
         jRadioButton2.setText("Inactivo");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel5.setText("Codigo");
-
-        agregar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        agregar.setText("Agregar");
-        agregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                agregarActionPerformed(evt);
-            }
-        });
+        jLabel5.setText("Ingrese el codigo del producto a Buscar:");
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -231,24 +237,20 @@ public class abm_producto extends javax.swing.JFrame {
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                             .addComponent(descripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(agregar)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(guardar)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(cancelar))))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(guardar)
+                                .addGap(18, 18, 18)
+                                .addComponent(cancelar)))))
                 .addGap(30, 30, 30))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(354, 354, 354))
             .addGroup(layout.createSequentialGroup()
-                .addGap(139, 139, 139)
+                .addGap(90, 90, 90)
                 .addComponent(jLabel5)
-                .addGap(31, 31, 31)
+                .addGap(43, 43, 43)
                 .addComponent(codigo, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
-                .addComponent(buscar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -256,12 +258,11 @@ public class abm_producto extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addComponent(jLabel1)
-                .addGap(28, 28, 28)
+                .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(codigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buscar)
                     .addComponent(jLabel5))
-                .addGap(27, 27, 27)
+                .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -277,9 +278,7 @@ public class abm_producto extends javax.swing.JFrame {
                             .addComponent(jLabel3)
                             .addComponent(jRadioButton1)
                             .addComponent(jRadioButton2))
-                        .addGap(40, 40, 40)
-                        .addComponent(agregar)
-                        .addGap(29, 29, 29)
+                        .addGap(100, 100, 100)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(modificar)
                             .addComponent(cancelar)
@@ -290,8 +289,7 @@ public class abm_producto extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
-        // TODO add your handling code here:
+    private void buscar(){
         Connection con = Conexion.Conexion.conexion();
         int cod = Integer.parseInt(codigo.getText());
         try{
@@ -310,28 +308,40 @@ public class abm_producto extends javax.swing.JFrame {
                 encontrado = true;
             }
             if (!encontrado){
-                JOptionPane.showMessageDialog(null, "No se encontro el producto puede cargarlo...");
+                //JOptionPane.showMessageDialog(null, "No se encontro el producto puede cargarlo...");
                 componentactivo();
-                agregar.setEnabled(true);
+                guardar.setEnabled(true);
                 cancelar.setEnabled(true);
+                jRadioButton1.setSelected(true);
+                modific = false;
             }
             rs.close();
             con.close();
         }catch(Exception ex){
             JOptionPane.showMessageDialog(this,"Error al buscar el producto" +ex.getMessage());
-        }
-    }//GEN-LAST:event_buscarActionPerformed
-
+        }   
+    }
+    
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         // TODO add your handling code here:
         int marc = marcamap.get(jComboBox2.getSelectedItem().toString());
         int estado = jRadioButton1.isSelected() ? 1 : 0;
-        int codig = Integer.parseInt(codigo.getText());
-        try{
-            Clases.Producto.Modificar(con, descripcion.getText(), marc, estado, codig);
-        }catch(Exception ex){
-            JOptionPane.showInternalMessageDialog(this,"Error no se pudo cargar el libro"+ ex.getMessage());
+        if (modific){
+            int codig = Integer.parseInt(codigo.getText());
+            try{
+                Clases.Producto.Modificar(con, descripcion.getText(), marc, estado, codig);
+            }catch(Exception ex){
+                JOptionPane.showInternalMessageDialog(this,"Error no se pudo cargar el libro"+ ex.getMessage());
+            }
+        }else{
+            try{
+                Clases.Producto.Insertar(con, descripcion.getText(), marc, estado);
+            }catch(Exception ex){
+                JOptionPane.showInternalMessageDialog(this,"Error no se pudo cargar el libro"+ ex.getMessage());
+            }
         }
+        componentdesactivado();
+        modific = false;
     }//GEN-LAST:event_guardarActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -352,6 +362,9 @@ public class abm_producto extends javax.swing.JFrame {
     private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
         // TODO add your handling code here:
         componentdesactivado();
+        guardar.setEnabled(false);
+        modificar.setEnabled(false);
+        cancelar.setEnabled(false);
     }//GEN-LAST:event_cancelarActionPerformed
 
     private void modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarActionPerformed
@@ -359,18 +372,8 @@ public class abm_producto extends javax.swing.JFrame {
         componentactivo();
         guardar.setEnabled(true);
         cancelar.setEnabled(true);
+        modific = true;
     }//GEN-LAST:event_modificarActionPerformed
-
-    private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
-        // TODO add your handling code here:
-        int marc = marcamap.get(jComboBox2.getSelectedItem().toString());
-        int estado = jRadioButton1.isSelected() ? 1 : 0;
-        try{
-            Clases.Producto.Insertar(con, descripcion.getText(), marc, estado);
-        }catch(Exception ex){
-            JOptionPane.showInternalMessageDialog(this,"Error no se pudo cargar el libro"+ ex.getMessage());
-        }
-    }//GEN-LAST:event_agregarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -408,8 +411,6 @@ public class abm_producto extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton agregar;
-    private javax.swing.JButton buscar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelar;
     private javax.swing.JTextField codigo;

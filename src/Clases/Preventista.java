@@ -36,13 +36,14 @@ public class Preventista {
             JOptionPane.showMessageDialog(null,"Error... " +ex.getMessage());
         }
     }
-    public static void Modificar(Connection con, String nombre, String apellido, String dni, String telefono, int estado)throws Exception{
-        PreparedStatement stm = con.prepareStatement("update preventista set nombre_preventista = ?, apellido_preventista = ?, dni_preventista = ?, telefono_preventista = ?, estado_preventista = ?");
+    public static void Modificar(Connection con, String nombre, String apellido, String dni, String telefono, int estado, String dni_b)throws Exception{
+        PreparedStatement stm = con.prepareStatement("update preventista set nombre_preventista = ?, apellido_preventista = ?, dni_preventista = ?, telefono_preventista = ?, estado_preventista = ? where  dni_preventista = ?");
         stm.setString(1, nombre);
         stm.setString(2, apellido);
         stm.setString(3, dni);
         stm.setString(4, telefono);
         stm.setInt(5, estado);
+        stm.setString(6, dni_b);
         try{
             stm.execute();
             JOptionPane.showMessageDialog(null, "Modificacion correcta..");
